@@ -75,6 +75,52 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
   };
 
+  // ADDING HISTORY BUTTON
+  document.getElementById("history-button").addEventListener("click", () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("history.html") });
+  });
+  
+  // FUNCTION TO SAVE TASKS TO HISTORY
+  function saveTaskToHistory(taskText) {
+    const today = new Date().toISOString().split("T")[0];
+    const completedTask = { text: taskText.trim(), completed: true };
+  
+    chrome.storage.local.get("history", (result) => {
+      const history = result.history || {};
+  
+      if (!Array.isArray(history[today])) {
+        history[today] = [];
+      }
+  
+      if (!history[today].some(t => t.text === completedTask.text)) {
+        history[today].push(completedTask);
+        chrome.storage.local.set({ history }, () => {
+          console.log("✅ Saved task to history:", completedTask);
+        });
+      }
+    });
+  }
+
+  // ADDING MOOD SELECTOR
+  const moodButtons = document.querySelectorAll("#mood-options button");
+  const today = new Date().toISOString().split("T")[0];
+
+  moodButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const selectedMood = btn.dataset.mood;
+    chrome.storage.local.get("mood", (result) => {
+      const moodData = result.mood || {};
+      moodData[today] = selectedMood;
+      chrome.storage.local.set({ mood: moodData }, () => {
+        console.log("✅ Mood saved:", selectedMood);
+        document.getElementById("mood-selector").style.display = "none";
+      });
+    });
+  });
+  });
+
+  
+
   // Deer area configuration
   const baseDeerAreas = [
     {
@@ -628,6 +674,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const checkbox = taskItem.querySelector("input[type='checkbox']");
       checkbox.addEventListener("change", () => {
+        if (checkbox.checked && task.text.trim() !== "") {
+          saveTaskToHistory(task.text);
+        }
+        
         const originalIndex = tasks.indexOf(task);
         tasks[originalIndex].completed = checkbox.checked;
 
@@ -1053,7 +1103,8 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   // 10. Chrome Storage
-  chrome.storage.local.get("state", (data) => {
+  chrome.storage.local.get(["state"], (data) => {
+    
     if (data.state) {
       const {
         tasks,
@@ -1064,6 +1115,28 @@ document.addEventListener("DOMContentLoaded", () => {
       } = data.state;
 
       if (isFinalImage) {
+        // Update history with completed tasks
+        chrome.storage.local.get("history", (result) => {
+          const history = result.history || {};
+          const today = new Date().toISOString().split("T")[0];
+          const completedTasks = tasks.filter(
+            t => t.completed && t.text.trim() !== ""
+          );
+        
+          if (!Array.isArray(history[today])) {
+            history[today] = [];
+          }
+        
+          history[today].push(...completedTasks);
+        
+          chrome.storage.local.set({ history }, () => {
+            console.log("✅ Saved history:", history);
+          });
+        });
+        
+      
+        // existing background + thank you message logic continues...
+      
         removeAllListeners();
         changeBackgroundWithSlide(
           backgroundSets[selectedCategory][

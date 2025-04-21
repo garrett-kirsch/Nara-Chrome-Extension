@@ -94,6 +94,70 @@ body {
     max-width: 400px;
 }
 
+#history-container {
+    padding: 2rem;
+    font-family: 'DM Sans', sans-serif;
+    color: #2c3e50;
+  }
+  
+  .history-entry {
+    margin-bottom: 2rem;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .history-entry h3 {
+    margin-top: 0;
+    font-size: 1.25rem;
+    color: #4158D0;
+  }
+  
+  .history-task-list {
+    list-style-type: disc;
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+  }
+  
+  .history-task-list li {
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
+  }
+  
+  #mood-selector {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'DM Sans', sans-serif;
+    z-index: 999;
+  }
+  
+  #mood-selector p {
+    margin: 0 0 8px 0;
+    font-weight: 500;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  #mood-options button {
+    font-size: 24px;
+    margin-right: 8px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: transform 0.2s ease;
+  }
+  
+  #mood-options button:hover {
+    transform: scale(1.3);
+  }
+  
+
 .category-button {
     background: rgba(255, 255, 255, 0.9);
     border: none;
